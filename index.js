@@ -45,6 +45,20 @@ app.get('/api/persons/:id', (request, response) => {
     }
 })
 
+app.delete('/api/persons/:id', (request, response) => {
+    const id = Number(request.params.id)
+    const valid = people.some(person => person.id === id)
+
+    if (valid) {
+        people = people.filter(person => person.id !== id)
+        console.log("delete: success")
+        response.status(204).end()
+    } else {
+        console.log("id does not exist")
+        response.status(404).end()
+    }
+})
+
 const PORT = 3001
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
