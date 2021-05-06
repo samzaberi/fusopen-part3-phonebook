@@ -22,7 +22,6 @@ app.get('/api/persons', (request, response) => {
     })
 })
 
-const generateId = (min, max) => Math.floor(Math.random() * (max - min) + min)
 
 app.get('/info', (request, response) => {
     const date = new Date()
