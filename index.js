@@ -65,6 +65,21 @@ app.delete('/api/persons/:id', (request, response) => {
 
 app.post('/api/persons', (request, response) => {
     const person = request.body
+
+    if (!person.name && !person.number) {
+        return response.status(400).json({
+            error: 'name and number missing'
+        })
+    }
+    const nameExists = () => {
+        return people.some(p => p.name === person.name)
+    }
+    if (nameExists) {
+        return response.status(400).json({
+            error: 'name already exists'
+        })
+    }
+
     person.id = generateId(5, 100)
     people = people.concat(person)
 
