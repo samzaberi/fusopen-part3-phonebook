@@ -9,6 +9,7 @@ morgan.token('req-body', (req, res) => JSON.stringify(req.body))
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :req-body'))
 app.use(cors())
+app.use(express.static('build'))
 
 let people = [
     {
@@ -76,14 +77,14 @@ app.post('/api/persons', (request, response) => {
             error: 'name and number missing'
         })
     }
-    const nameExists = () => {
-        return people.some(p => p.name === person.name)
-    }
-    if (nameExists) {
-        return response.status(400).json({
-            error: 'name already exists'
-        })
-    }
+    // const nameExists = () => {
+    //     return people.some(p => p.name === person.name)
+    // }
+    // if (nameExists) {
+    //     return response.status(400).json({
+    //         error: 'name already exists'
+    //     })
+    // }
 
     person.id = generateId(5, 100)
     people = people.concat(person)
