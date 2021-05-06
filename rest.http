@@ -1,4 +1,4 @@
-DELETE http://localhost:3001/api/persons/6
+DELETE http://localhost:3001/api/persons/6094190888412c0e04c6c837
 
 ###
 
@@ -6,6 +6,10 @@ POST http://localhost:3001/api/persons
 content-type: application/json
 
 {
-    "name":"Arto Hellas",
+    "name":"bigmo",
     "number":"010-123456"
 }
+
+###
+
+GET http://localhost:3001/api/persons/6093faacc07c6c1554f06
