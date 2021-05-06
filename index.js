@@ -1,6 +1,8 @@
 const express = require('express')
 const app = express()
 
+app.use(express.json())
+
 let people = [
     {
         id: 1,
@@ -27,6 +29,8 @@ let people = [
 app.get('/api/persons', (request, response) => {
     response.json(people)
 })
+
+const generateId = (min, max) => Math.floor(Math.random() * (max - min) + min)
 
 app.get('/info', (request, response) => {
     const date = new Date()
@@ -57,6 +61,15 @@ app.delete('/api/persons/:id', (request, response) => {
         console.log("id does not exist")
         response.status(404).end()
     }
+})
+
+app.post('/api/persons', (request, response) => {
+    const person = request.body
+    person.id = generateId(5, 100)
+    people = people.concat(person)
+
+    console.log(people)
+    response.json(person)
 })
 
 const PORT = 3001
