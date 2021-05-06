@@ -1,7 +1,10 @@
 const express = require('express')
+const morgan = require('morgan')
 const app = express()
 
 app.use(express.json())
+
+app.use(morgan('dev'))
 
 let people = [
     {
@@ -55,10 +58,8 @@ app.delete('/api/persons/:id', (request, response) => {
 
     if (valid) {
         people = people.filter(person => person.id !== id)
-        console.log("delete: success")
         response.status(204).end()
     } else {
-        console.log("id does not exist")
         response.status(404).end()
     }
 })
