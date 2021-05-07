@@ -14,17 +14,7 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :r
 app.use(cors())
 app.use(express.static('build'))
 
-const errorHandler = (error, request, response, next) => {
-    console.error(error)
 
-    // if (error.name === 'CastError') {
-    //     return response.status(400).send({ error: 'malformatted id' })
-    // }
-
-    next(error)
-}
-
-app.use(errorHandler)
 
 app.get('/api/persons', (request, response, next) => {
     Person.find({}).then(person => {
@@ -68,7 +58,7 @@ app.put('/api/persons/:id', (request, response, next) => {
 
 app.delete('/api/persons/:id', (request, response, next) => {
     const id = request.params.id
-    Person.deleteOne({ _id: id }, (result) => {
+    Person.deleteOne({ _id: id }).then(result => {
         response.status(204).end()
     }).catch(error => next(error))
 
@@ -98,8 +88,24 @@ app.post('/api/persons', (request, response, next) => {
         console.log('note saved!')
         response.json(result)
 
-    }).catch(error => next(error))
+    }).catch(error => {
+        next(error)
+        // response.status(500).send({ error: 'name already exists' })
+    })
 })
+
+const errorHandler = (error, request, response, next) => {
+    console.log("recieved error")
+    console.error(error.message)
+
+    if (error.name === 'ValidationError') {
+        return response.status(500).send({ error: 'name already exists' })
+    }
+
+    next(error)
+}
+
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
