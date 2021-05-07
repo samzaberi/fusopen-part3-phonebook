@@ -14,43 +14,67 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :r
 app.use(cors())
 app.use(express.static('build'))
 
+const errorHandler = (error, request, response, next) => {
+    console.error(error)
 
-app.get('/api/persons', (request, response) => {
+    // if (error.name === 'CastError') {
+    //     return response.status(400).send({ error: 'malformatted id' })
+    // }
+
+    next(error)
+}
+
+app.use(errorHandler)
+
+app.get('/api/persons', (request, response, next) => {
     Person.find({}).then(person => {
         console.log(person.length)
         response.json(person)
-    })
+    }).catch(error => next(error))
 })
 
 
-app.get('/info', (request, response) => {
+app.get('/info', (request, response, next) => {
     const date = new Date()
     Person.find({}).then(person => {
         const result = `<p>Phonebook has info for ${person.length} people</p><p>${date}</p>`
         return response.send(result)
-    })
+    }).catch(error => next(error))
 
 })
 
-app.get('/api/persons/:id', (request, response) => {
+app.get('/api/persons/:id', (request, response, next) => {
     Person.findById(request.params.id).then(person => {
         response.json(person)
-    }).catch((error) => {
-        response.status(404).end()
-    })
+    }).catch(error => next(error))
 
 
 })
 
-app.delete('/api/persons/:id', (request, response) => {
+app.put('/api/persons/:id', (request, response, next) => {
+    const body = request.body
+    const person = {
+        "name": body.name,
+        number: body.number,
+    }
+
+    Person.findByIdAndUpdate(request.params.id, person, { new: true })
+        .then(result => {
+            response.json(result)
+        })
+        .catch(error => next(error))
+
+})
+
+app.delete('/api/persons/:id', (request, response, next) => {
     const id = request.params.id
-    Person.deleteOne({ _id: id }, (error) => {
-        response.json(error)
-    })
+    Person.deleteOne({ _id: id }, (result) => {
+        response.status(204).end()
+    }).catch(error => next(error))
 
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
     const rb = request.body
 
     if (!rb.name && !rb.number) {
@@ -74,7 +98,7 @@ app.post('/api/persons', (request, response) => {
         console.log('note saved!')
         response.json(result)
 
-    })
+    }).catch(error => next(error))
 })
 
 const PORT = process.env.PORT || 3001
