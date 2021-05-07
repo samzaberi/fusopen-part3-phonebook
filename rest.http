@@ -7,7 +7,7 @@ content-type: application/json
 
 {
     "name":"hummer",
-    "number":"010-123756"
+    "number":"010"
 }
 
 ###

@@ -48,7 +48,7 @@ app.put('/api/persons/:id', (request, response, next) => {
         number: body.number,
     }
 
-    Person.findByIdAndUpdate(request.params.id, person, { new: true })
+    Person.findByIdAndUpdate(request.params.id, person, { new: true, runValidators: true, context: 'query' })
         .then(result => {
             response.json(result)
         })
@@ -90,7 +90,6 @@ app.post('/api/persons', (request, response, next) => {
 
     }).catch(error => {
         next(error)
-        // response.status(500).send({ error: 'name already exists' })
     })
 })
 
@@ -99,7 +98,7 @@ const errorHandler = (error, request, response, next) => {
     console.error(error.message)
 
     if (error.name === 'ValidationError') {
-        return response.status(500).send({ error: 'name already exists' })
+        return response.status(500).send({ error: error.message })
     }
 
     next(error)
